@@ -58,7 +58,14 @@ PROJECT_ID=your_project_id
 OPENAI_API_KEY=your_openai_api_key
 
 # Optional
-VF_CLOUD=general|development|staging  # Defaults to production
+# Number of top questions to return (Defaults to 10)
+TOP_QUESTIONS=10
+
+# Time range to analyze (today|yesterday|last7|last30|all) (Defaults to last7)
+TIME_RANGE=last7
+
+# Optional: Voiceflow cloud environment (Defaults to production)
+VF_CLOUD=general|development|staging
 ```
 
 ## CLI Mode
@@ -103,8 +110,8 @@ Start a new analysis.
 Request (optional, defaults to .env values):
 ```json
 {
-  "vfApiKey": "optional_override_api_key",
-  "projectId": "optional_override_project_id"
+  "VF_API_KEY": "optional_override_api_key",
+  "PROJECT_ID": "optional_override_project_id"
 }
 ```
 

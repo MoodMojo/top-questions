@@ -22,8 +22,8 @@ const querySchema = z.object({
 })
 
 const bodySchema = z.object({
-  vfApiKey: z.string().optional(),
-  projectId: z.string().optional()
+  VF_API_KEY: z.string().optional(),
+  PROJECT_ID: z.string().optional()
 })
 
 interface ReportParams {
@@ -36,8 +36,8 @@ interface QueryParams {
 }
 
 interface RequestBody {
-  vfApiKey?: string;
-  projectId?: string;
+  VF_API_KEY?: string;
+  PROJECT_ID?: string;
 }
 
 declare global {
@@ -61,8 +61,8 @@ const analyzeHandler: RequestHandler<{}, any, RequestBody, QueryParams> = async 
       TIME_RANGE: query.range,
       TOP_QUESTIONS: query.top,
       IS_SERVER: true,
-      ...(body.vfApiKey && { VF_API_KEY: body.vfApiKey }),
-      ...(body.projectId && { PROJECT_ID: body.projectId })
+      ...(body.VF_API_KEY && { VF_API_KEY: body.VF_API_KEY }),
+      ...(body.PROJECT_ID && { PROJECT_ID: body.PROJECT_ID })
     })
 
     // Create pending report
@@ -70,10 +70,10 @@ const analyzeHandler: RequestHandler<{}, any, RequestBody, QueryParams> = async 
 
     // Start a test request to validate credentials before proceeding
     const testRequest = await fetch(
-      `${getVoiceflowApiUrl()}/v2/transcripts/${body.projectId || process.env.PROJECT_ID}?range=Today`,
+      `${getVoiceflowApiUrl()}/v2/transcripts/${body.PROJECT_ID || process.env.PROJECT_ID}?range=Today`,
       {
         headers: {
-          'Authorization': body.vfApiKey || process.env.VF_API_KEY || '',
+          'Authorization': body.VF_API_KEY || process.env.VF_API_KEY || '',
           'accept': 'application/json'
         }
       }
