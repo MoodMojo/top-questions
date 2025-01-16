@@ -1,0 +1,46 @@
+{
+  "name": "top-questions",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "voiceflow",
+    "niko",
+    "transcripts"
+  ],
+  "license": "ISC",
+  "author": "NiKo | Voiceflow",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node --no-deprecation --experimental-specifier-resolution=node dist/cli.js",
+    "server": "npm run build && node --no-deprecation --experimental-specifier-resolution=node dist/cli.js --server",
+    "server:dev": "nodemon --watch 'src/**/*.ts' --exec 'npm run server'",
+    "today": "npm start -- -r today",
+    "last7": "npm start -- -r last7",
+    "last30": "npm start -- -r last30",
+    "alltime": "npm start -- -r alltime"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/natural": "^5.1.5",
+    "@types/ora": "^3.1.0",
+    "nodemon": "^3.0.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "chalk": "^5.4.1",
+    "commander": "^13.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "natural": "^8.0.1",
+    "openai": "^4.78.1",
+    "ora": "^8.1.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "zod": "^3.24.1"
+  }
+}
