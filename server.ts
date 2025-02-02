@@ -51,57 +51,60 @@ declare global {
 // Start analysis and return report ID
 const analyzeHandler: RequestHandler<{}, any, RequestBody, QueryParams> = async (req, res, next) => {
   try {
-    const query = querySchema.parse(req.query)
-    const body = bodySchema.parse(req.body)
-    const reportId = crypto.randomUUID()
+    const query = querySchema.parse(req.query);
+    const body = bodySchema.parse(req.body);
+    const reportId = crypto.randomUUID();
 
-    console.log(`[${new Date().toISOString()}] Starting analysis - reportId: ${reportId}, range: ${query.range}, top: ${query.top}`)
+    console.log(`[${new Date().toISOString()}] Starting analysis - reportId: ${reportId}, range: ${query.range}, top: ${query.top}`);
 
     setEnvironmentVariables({
       TIME_RANGE: query.range,
       TOP_QUESTIONS: query.top,
       IS_SERVER: true,
       ...(body.VF_API_KEY && { VF_API_KEY: body.VF_API_KEY }),
-      ...(body.PROJECT_ID && { PROJECT_ID: body.PROJECT_ID })
-    })
+      ...(body.PROJECT_ID && { PROJECT_ID: body.PROJECT_ID }),
+    });
 
     // Create pending report
-    const report = await db.createReport(reportId, query.range, parseInt(query.top))
+    const report = await db.createReport(reportId, query.range, parseInt(query.top));
 
     // Start a test request to validate credentials before proceeding
     const testRequest = await fetch(
       `${getVoiceflowApiUrl()}/v2/transcripts/${body.PROJECT_ID || process.env.PROJECT_ID}?range=Today`,
       {
         headers: {
-          'Authorization': body.VF_API_KEY || process.env.VF_API_KEY || '',
-          'accept': 'application/json'
-        }
+          Authorization: body.VF_API_KEY || process.env.VF_API_KEY || '',
+          accept: 'application/json',
+        },
       }
-    )
+    );
 
     if (!testRequest.ok) {
       if (testRequest.status === 401) {
-        throw new Error('Invalid Voiceflow API key')
+        throw new Error('Invalid Voiceflow API key');
       } else if (testRequest.status === 404) {
-        throw new Error('Invalid project ID')
+        throw new Error('Invalid project ID');
       } else {
-        throw new Error(`Failed to validate credentials: ${testRequest.statusText}`)
+        throw new Error(`Failed to validate credentials: ${testRequest.statusText}`);
       }
     }
 
-    // Start analysis in background only after validation succeeds
+    // ✅ Only start analysis AFTER an API request is made
     analyzeQuestions()
-      .then(result => {
-        console.log(`[${new Date().toISOString()}] Analysis completed - reportId: ${reportId}`)
-        db.updateReport(reportId, { status: 'completed', result })
+      .then((result) => {
+        console.log(`[${new Date().toISOString()}] Analysis completed - reportId: ${reportId}`);
+        db.updateReport(reportId, { status: 'completed', result });
       })
-      .catch(error => {
-        console.error(`[${new Date().toISOString()}] Analysis failed - reportId: ${reportId}:`, error instanceof Error ? error.message : 'Unknown error occurred')
+      .catch((error) => {
+        console.error(
+          `[${new Date().toISOString()}] Analysis failed - reportId: ${reportId}:`,
+          error instanceof Error ? error.message : 'Unknown error occurred'
+        );
         db.updateReport(reportId, {
           status: 'failed',
-          error: error instanceof Error ? error.message : 'Unknown error occurred'
-        })
-      })
+          error: error instanceof Error ? error.message : 'Unknown error occurred',
+        });
+      });
 
     // Return report ID immediately
     res.json({
@@ -109,14 +112,13 @@ const analyzeHandler: RequestHandler<{}, any, RequestBody, QueryParams> = async 
       data: {
         reportId,
         status: report.status,
-        message: 'Analysis started. Use the reportId to check status and get results.'
-      }
-    })
+        message: 'Analysis started. Use the reportId to check status and get results.',
+      },
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
-
+};
 // Get report status and results
 const getReportHandler: RequestHandler<ReportParams> = async (req, res, next) => {
   try {
