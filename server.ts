@@ -198,7 +198,7 @@ app.use(errorHandler)
   })
 }, 60 * 60 * 1000) // Run every hour */
 
-export async function startServer(port: number = 3000): Promise<void> {
+export async function startServer(port: number = 8000): Promise<void> {
   return new Promise((resolve) => {
     app.listen(port, () => {
       console.log(`\nServer running at http://localhost:${port}`)
