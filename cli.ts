@@ -15,6 +15,7 @@ const program = new Command()
   .option('-s, --server', 'run in server mode')
   .option('-p, --port <number>', 'port number for server mode', '8000')
   .option('-c, --check <reportId>', 'check status of a specific report')
+  .option('-a, --analyze', 'run the analysis directly')
   .parse(process.argv)
 
 // Load env and override with CLI options
@@ -74,7 +75,9 @@ async function main() {
   try {
     if (options.check) {
       await checkReport(options.check)
-    } else if (options.server || !options.check) {
+    } else if (options.analyze) {
+      await runAnalysis()
+    } else {
       console.log(chalk.blue('\n🚀 Starting server mode...'))
       await startServer(parseInt(options.port))
       console.log(chalk.gray('\nAvailable endpoints:'))
@@ -83,8 +86,6 @@ async function main() {
       console.log(chalk.gray('  GET /api/reports/:reportId - Get report status and results'))
       console.log(chalk.gray('\nExample:'))
       console.log(chalk.gray(`  curl -X POST "http://localhost:${options.port}/api/analyze?range=last7&top=5"`))
-    } else {
-      await runAnalysis()
     }
   } catch (error) {
     console.error(chalk.red('\n❌ Error:'), error)
