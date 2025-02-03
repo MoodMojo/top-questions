@@ -13,7 +13,7 @@ const program = new Command()
   .option('-r, --range <range>', 'time range (today, yesterday, last7, last30, alltime)', 'last7')
   .option('-t, --top <number>', 'number of top questions to show', '10')
   .option('-s, --server', 'run in server mode')
-  .option('-p, --port <number>', 'port number for server mode', '3000')
+  .option('-p, --port <number>', 'port number for server mode', '8000')
   .option('-c, --check <reportId>', 'check status of a specific report')
   .parse(process.argv)
 
