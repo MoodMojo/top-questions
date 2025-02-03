@@ -74,7 +74,7 @@ async function main() {
   try {
     if (options.check) {
       await checkReport(options.check)
-    } else if (options.server) {
+    } else if (options.server || !options.check) {
       console.log(chalk.blue('\n🚀 Starting server mode...'))
       await startServer(parseInt(options.port))
       console.log(chalk.gray('\nAvailable endpoints:'))
