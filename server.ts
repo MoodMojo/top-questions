@@ -130,29 +130,12 @@ const getReportHandler: RequestHandler<ReportParams> = async (req, res, next) =>
   }
 };
 
-// ✅ Health check endpoint
-const healthHandler: RequestHandler = (_, res) => {
-  res.json({ status: 'ok' });
-};
-
-// ✅ Error handling middleware
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.error(`❌ Error processing request:`, err.message);
-
-  res.status(err.status || 500).json({
-    success: false,
-    error: err.message || 'Unknown error occurred'
-  });
-};
-
-// Register routes
+// ✅ Register routes
 router.post('/api/analyze', analyzeHandler);
 router.get('/api/reports/:reportId', getReportHandler);
-router.get('/health', healthHandler);
+router.get('/health', (_, res) => res.json({ status: 'ok' }));
 
-// Use router and error handler
 app.use(router);
-app.use(errorHandler);
 
 // ✅ Start the server
 export async function startServer(port: number = 3000): Promise<void> {
