@@ -180,7 +180,6 @@ function extractQuestions(transcript: string): string[] {
   return sentences.filter((sentence) => {
     return (
       sentence.match(/^(who|what|when|where|why|how|is|are|can|could|would|will|do|does|did)/i)
-      && sentence.match(/\?$/)
     )
   })
 }
