@@ -18,7 +18,7 @@ const RANGE_MAPPING: Record<TimeRange, string> = {
   last7: 'Last%207%20Days',
   last30: 'Last%2030%20days',
   alltime: 'All%20time',
-  monthToDate: 'Month%20to%20Date' // New addition
+  monthToDate: 'Month%20to%20Date' // remains unchanged for filtering purposes
 }
 
 // GPT-4o pricing per 1k tokens
@@ -128,9 +128,11 @@ async function fetchTranscriptSummaries(): Promise<TranscriptSummary[]> {
   // Validate credentials before making any requests
   await validateVoiceflowCredentials()
 
-  const range = RANGE_MAPPING[env.TIME_RANGE]
+  // Use the 'last30' API parameter if the time range is 'monthToDate'
+  const apiRange = env.TIME_RANGE === 'monthToDate' ? RANGE_MAPPING['last30'] : RANGE_MAPPING[env.TIME_RANGE];
+
   const response = await fetch(
-    `${getVoiceflowApiUrl()}/v2/transcripts/${env.PROJECT_ID}?range=${range}`,
+    `${getVoiceflowApiUrl()}/v2/transcripts/${env.PROJECT_ID}?range=${apiRange}`,
     {
       headers: {
         'Authorization': env.VF_API_KEY,
