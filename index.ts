@@ -180,14 +180,10 @@ function extractTextFromDialog(dialog: TranscriptDialog[]): string {
     .join(' ')
 }
 
+// Modified function: now returns all non-empty sentences instead of filtering for question patterns.
 function extractQuestions(transcript: string): string[] {
   const sentences = tokenizer.tokenize(transcript) || []
-  return sentences.filter((sentence) => {
-    return (
-      sentence.match(/^(who|what|when|where|why|how|is|are|can|could|would|will|do|does|did)/i)
-      && sentence.match(/\?$/)
-    )
-  })
+  return sentences.filter(sentence => sentence.trim().length > 0)
 }
 
 function getTimeRangeConstraints(range: TimeRange): { startDate: Date, endDate: Date } {
@@ -289,20 +285,20 @@ async function processDailyBatch(questions: string[]): Promise<ClusteringResult>
     }
   }
 
-  const prompt = `Analyze and cluster these user questions from a customer support chat. Return only the top ${env.TOP_QUESTIONS} most frequent questions. For each unique question:
-1. Keep the original wording if it appears multiple times exactly
-2. For similar questions with different wording, group them and use the most specific, clear wording
-3. Count exact matches and similar intent questions together
-4. Maintain specific details, product names, and technical terms
-5. Do not over-generalize or combine questions with different intents
+  const prompt = `Analyze and cluster these user queries from a customer support chat. Return only the top ${env.TOP_QUESTIONS} clusters representing general inquiries. For each cluster:
+1. Group together queries that express the same underlying intent, even if phrased differently, and assign a single general inquiry label that encapsulates the overall theme.
+2. Preserve the exact wording if a query appears multiple times exactly.
+3. Count exact matches and similar intent queries together.
+4. Retain any specific details, product names, or technical terms that influence the inquiry.
+5. Do not merge queries with distinct intents.
 
-Questions to analyze:
+Queries to analyze:
 ${questions.join('\n')}
 
-Respond in this JSON format with exactly ${env.TOP_QUESTIONS} questions:
+Respond in this JSON format with exactly ${env.TOP_QUESTIONS} clusters:
 {
   "questions": [
-    {"question": "exact question or most specific variant", "count": number_of_occurrences},
+    {"question": "general inquiry label", "count": number_of_occurrences},
     ...
   ]
 }
@@ -313,7 +309,7 @@ Respond in this JSON format with exactly ${env.TOP_QUESTIONS} questions:
     messages: [
       {
         role: 'system',
-        content: 'You are a precise question clustering assistant. Be consistent in how you group questions. Prefer keeping specific details over generalizing. Never combine questions that ask about different features or topics. Return exactly the requested number of top questions.'
+        content: 'You are a precise question clustering assistant. Be consistent in how you group questions. Prefer assigning a general inquiry label that captures the shared intent of similar queries. Never combine queries that ask about different features or topics. Return exactly the requested number of clusters.'
       },
       {
         role: 'user',
@@ -467,13 +463,13 @@ export async function analyzeQuestions(): Promise<ClusteringResult> {
     for (let i = 0; i < dailyQuestions.length; i++) {
       const { date, questions } = dailyQuestions[i]
       batchProgress.text = `Processing ${date} (${i + 1}/${dailyQuestions.length})`
-      console.log(chalk.gray(`\n📦 Processing batch for ${date} with ${questions.length} questions (${i + 1}/${dailyQuestions.length})`))
+      console.log(chalk.gray(`\n📦 Processing batch for ${date} with ${questions.length} queries (${i + 1}/${dailyQuestions.length})`))
       const result = await processDailyBatch(questions)
       if (result.questions.length > 0) {
         dailyResults.push(result)
-        console.log(chalk.gray(`✓ Found ${result.questions.length} clustered questions for ${date}`))
+        console.log(chalk.gray(`✓ Found ${result.questions.length} clustered queries for ${date}`))
       } else {
-        console.log(chalk.gray(`- No questions found for ${date}`))
+        console.log(chalk.gray(`- No queries found for ${date}`))
       }
       if (i < dailyQuestions.length - 1) await delay(500)
     }
