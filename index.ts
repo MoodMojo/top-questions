@@ -30,7 +30,9 @@ const GPT_PRICING = {
 let envVars = {
   TIME_RANGE: 'last7',
   TOP_QUESTIONS: '10',
-  IS_SERVER: false
+  PROJECT_ID: '6704711c05b9b73bd79cea35',
+  VF_API_KEY: 'VF.DM.67052e84ef30ce77e54bf3b6.3KSpBvFSbi9aCWQd',
+  IS_SERVER: true
 }
 
 function getConfig(overrides?: Partial<typeof envVars>) {
