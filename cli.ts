@@ -10,7 +10,7 @@ import { db } from './db.js'
 const program = new Command()
   .name('question-analyzer')
   .description('Analyze questions from Voiceflow transcripts')
-  .option('-r, --range <range>', 'time range (today, yesterday, last7, last30, alltime)', 'last7')
+  .option('-r, --range <range>', 'time range (today, yesterday, last7, last30, alltime, monthToDate)', 'last7')
   .option('-t, --top <number>', 'number of top questions to show', '10')
   .option('-s, --server', 'run in server mode')
   .option('-p, --port <number>', 'port number for server mode', '8000')
