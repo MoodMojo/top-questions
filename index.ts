@@ -222,9 +222,12 @@ function getTimeRangeConstraints(range: TimeRange): { startDate: Date, endDate: 
         endDate: now
       }
     }
-    case 'monthToDate': { // New case
-      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-      return { startDate: startOfMonth, endDate: now }
+    case 'monthToDate': {
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const daysSinceStart = Math.floor((today.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24));
+      const rollingStart = new Date(today);
+      rollingStart.setDate(today.getDate() - daysSinceStart);
+      return { startDate: rollingStart, endDate: now };
     }
     case 'alltime':
       return {
