@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 })
 
 const querySchema = z.object({
-  range: z.enum(['today', 'yesterday', 'last7', 'last30', 'alltime']).default('last7'),
+  range: z.enum(['today', 'yesterday', 'last7', 'last30', 'alltime', 'monthToDate']).default('last7'),
   top: z.string().transform(val => val.toString()).default('10')
 })
 
