@@ -179,7 +179,6 @@ function extractTextFromDialog(dialog: TranscriptDialog[]): string {
 function extractQuestions(transcript: string): string[] {
   const sentences = tokenizer.tokenize(transcript) || []
   return sentences
-  })
 }
 
 function getTimeRangeConstraints(range: TimeRange): { startDate: Date, endDate: Date } {
