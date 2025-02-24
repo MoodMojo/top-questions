@@ -15,7 +15,7 @@ type TimeRange = 'today' | 'yesterday' | 'last7' | 'last30' | 'alltime' | 'month
 const RANGE_MAPPING: Record<TimeRange, string> = {
   today: 'Today',
   yesterday: 'Yesterday',
-  last7: 'Last%207%20Days',
+  last7: 'Last%207%20days',
   last30: 'Last%2030%20days',
   alltime: 'All%20time',
   monthToDate: 'Month%20to%20Date' // remains unchanged for filtering purposes
