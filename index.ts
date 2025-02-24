@@ -10,14 +10,15 @@ dotenv.config({ override: true })
 
 const tokenizer = new natural.SentenceTokenizer([])
 
-type TimeRange = 'today' | 'yesterday' | 'last7' | 'last30' | 'alltime';
+type TimeRange = 'today' | 'yesterday' | 'last7' | 'last30' | 'alltime' | 'monthToDate';
 
 const RANGE_MAPPING: Record<TimeRange, string> = {
   today: 'Today',
   yesterday: 'Yesterday',
   last7: 'Last%207%20Days',
   last30: 'Last%2030%20days',
-  alltime: 'All%20time'
+  alltime: 'All%20time',
+  monthToDate: 'Month%20to%20Date' // New addition
 }
 
 // GPT-4o pricing per 1k tokens
@@ -42,7 +43,7 @@ function getConfig(overrides?: Partial<typeof envVars>) {
     VF_API_KEY: z.string(),
     OPENAI_API_KEY: z.string(),
     TOP_QUESTIONS: z.string().transform(val => parseInt(val, 10)).default("10"),
-    TIME_RANGE: z.enum(['today', 'yesterday', 'last7', 'last30', 'alltime']).default('today'),
+    TIME_RANGE: z.enum(['today', 'yesterday', 'last7', 'last30', 'alltime', 'monthToDate']).default('today'),
     IS_SERVER: z.boolean().default(false),
     VF_CLOUD: z.string().optional()
   })
@@ -214,6 +215,10 @@ function getTimeRangeConstraints(range: TimeRange): { startDate: Date, endDate: 
         startDate: thirtyDaysAgo,
         endDate: now
       }
+    }
+    case 'monthToDate': { // New case
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+      return { startDate: startOfMonth, endDate: now }
     }
     case 'alltime':
       return {
