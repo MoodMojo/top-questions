@@ -177,10 +177,7 @@ function extractTextFromDialog(dialog: TranscriptDialog[]): string {
 
 function extractQuestions(transcript: string): string[] {
   const sentences = tokenizer.tokenize(transcript) || []
-  return sentences.filter((sentence) => {
-    return (
-      sentence.match(/^(who|what|when|where|why|how|is|are|can|could|would|will|do|does|did)/i)
-    )
+  return sentences
   })
 }
 
