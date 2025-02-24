@@ -19,6 +19,7 @@
     "today": "npm start -- -r today",
     "last7": "npm start -- -r last7",
     "last30": "npm start -- -r last30",
+    "monthToDate": "npm start -- -r monthToDate",
     "alltime": "npm start -- -r alltime"
   },
   "devDependencies": {
